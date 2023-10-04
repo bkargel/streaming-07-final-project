@@ -10,6 +10,7 @@
 import random
 from faker import Faker
 from datetime import datetime, timedelta
+from operator import itemgetter
 import pika
 import sys
 import webbrowser
@@ -26,7 +27,12 @@ ADDRESS_TUPLE = (HOST, PORT)
 # Generate fake data for 50 students and 15 assignments each
 class_size = 50
 num_assignments = 15
-percent_low_grades = 5  # Percentage of grades between 0 and 69
+
+percent_low_grades = 5  # Percentage of grades between 1 and 59
+percent_zeros = 2 # Percentage of grades that are zeros
+
+start_date = datetime(2023, 8, 14)
+end_date = datetime.now()
 
 data = []
 
@@ -42,13 +48,15 @@ def generate_data():
         student_number = generate_student_number()
 
         for j in range(num_assignments):
-            assignment_date = fake.date_time_between(start_date='-90d', end_date='now').strftime('%Y-%m-%d')
+            assignment_date = fake.date_time_between(start_date + timedelta(days=random.randint(0, (end_date - start_date).days))).strftime('%Y-%m-%d')
 
-            # Assign 15% of grades between 0 and 69, and the rest between 70 and 100
-            if random.randint(1, 100) <= percent_low_grades:
-                grade = random.randint(0, 69)
+            # Assign 2% of grades as zero, 5% between 1 and 59, and the rest between 60 and 100
+            if random.randint(1, 100) <= percent_zeros:
+                grade = 0
+            elif random.randint(1, 100) <= percent_low_grades:
+                grade = random.randint(1, 59)
             else:
-                grade = random.randint(70, 100)
+                grade = random.randint(60, 100)
 
             data.append({
                 'student_number': student_number,
@@ -86,6 +94,8 @@ def send_message():
     try:
         # Shuffle the data to randomize the order
         random.shuffle(data)
+        # Sort the data by assignment date in chronological order
+        data.sort(key=itemgetter('assignment_date'))
         # create a blocking connection to the RabbitMQ server
         conn = pika.BlockingConnection(pika.ConnectionParameters(HOST))
         # use the connection to create a communication channel

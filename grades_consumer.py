@@ -1,6 +1,6 @@
 """
     This program receives messages from the producer in the "student_grades" queue and prints an alert
-    any time the student receives a grade below 70%.
+    any time the student receives a grade below 60%.
 
     Author: Brendi Kargel
     Date: October 3, 2023
@@ -20,8 +20,8 @@ ADDRESS_TUPLE = (HOST, PORT)
 
 # Declare variables
 queue = "student_grades"
-alert_grade = 70
-alert = "Alert!! Student has received a low grade and may want to redo the assignment."
+alert_grade = 60
+alert = "Alert!! Student has received a failing grade and may want to redo the assignment."
 
 # Define the callback for grades
 def grades_callback(ch, method, properties, body):
@@ -37,7 +37,7 @@ def grades_callback(ch, method, properties, body):
     grade = float(student_grades[4])
 
     #Calculating the grade and creating the alert
-    if grade < 70:
+    if grade < alert_grade:
         alert_needed = True
 
         if alert_needed:
