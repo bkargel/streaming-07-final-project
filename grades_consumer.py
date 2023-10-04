@@ -1,8 +1,6 @@
 """
-    This program listens for work messages contiously in the 02-food-A queue and sends an alert 
-    when certain conditions are met.
-
-    Condition: FoodA temperatures change less than 1 degree in a 10-minute window.
+    This program receives messages from the producer in the "student_grades" queue and prints an alert
+    any time the student receives a grade below 70%.
 
     Author: Brendi Kargel
     Date: October 3, 2023
@@ -25,7 +23,7 @@ queue = "student_grades"
 alert_grade = 70
 alert = "Alert!! Student has received a low grade and may want to redo the assignment."
 
-# Define the callback for foodA
+# Define the callback for grades
 def grades_callback(ch, method, properties, body):
     """ Define behavior on getting a message."""
     # decode the binary message body to a string
@@ -35,10 +33,10 @@ def grades_callback(ch, method, properties, body):
     first_name = student_grades[2]
     date_submitted = student_grades[3]
 
-    #Changing the temperature string to a float in order to do calculations
+    #Changing the grade from string to a float in order to do calculations
     grade = float(student_grades[4])
 
-    #Calculating the temp difference and creating the alert
+    #Calculating the grade and creating the alert
     if grade < 70:
         alert_needed = True
 

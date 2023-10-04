@@ -1,7 +1,7 @@
 """
     This program generates fake student data with the student number, student last name, student first name,
-    the date the assignment was turned in, and the grade as a percentage. Then, each line of data is sent to
-    the queue "student_grades" for consumption.
+    the date the assignment was submitted, and the grade as a percentage. Then, each line of data is sent to
+    the queue "student_grades" for consumption, with one line sent every 5 seconds. 
     
     Author: Brendi Kargel
     Date: October 3, 2023
@@ -23,10 +23,10 @@ HOST = "localhost"
 PORT = 9999
 ADDRESS_TUPLE = (HOST, PORT)
 
-# Generate fake data for 35 students and 10 assignments each
-class_size = 35
-num_assignments = 12
-percent_low_grades = 10  # Percentage of grades between 0 and 69
+# Generate fake data for 50 students and 15 assignments each
+class_size = 50
+num_assignments = 15
+percent_low_grades = 5  # Percentage of grades between 0 and 69
 
 data = []
 
@@ -112,7 +112,7 @@ def send_message():
             print(f" [x] Sent: {message} to {queue}")
 
             # Wait 5 seconds between each message
-            #time.sleep(5)
+            time.sleep(5)
 
     except pika.exceptions.AMQPConnectionError as e:
         print(f"Error: Connection to RabbitMQ server failed: {e}")
